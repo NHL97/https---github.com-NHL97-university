@@ -1,85 +1,116 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-function Updatestudent() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [marks, setMarks] = useState('')
-    const [grade, setGrade] = useState('')
-    const [city, setCity] = useState('')
+function UpdateStudent() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [marks, setMarks] = useState('');
+    const [grade, setGrade] = useState('');
+    const [city, setCity] = useState('');
     const { id } = useParams();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        axios.get(`http://localhost:5000/student/${id}`)
+            .then(res => {
+                const { name, email, marks, grade, city } = res.data;
+                setName(name);
+                setEmail(email);
+                setMarks(marks);
+                setGrade(grade);
+                setCity(city);
+            })
+            .catch(err => console.error(err));
+    }, [id]);
 
     function handleSubmit(e) {
-        e.preventDefault()
-        axios.put('http://localhost:5000/update/' + id, { name, email, marks, grade, city })
+        e.preventDefault();
+        axios.put(`http://localhost:5000/update/${id}`, { name, email, marks, grade, city })
             .then(res => {
-                console.log(res)
-                navigate('/')
+                console.log(res);
+                navigate('/');
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err));
     }
+
     return (
-        <div>
-            <div className='d-flex vh-100 bg-primary justify-content-center align-items-center'>
-                <div className='w-50 bg-white rounded p-3'>
-                    <form onSubmit={handleSubmit}> {/* Form submission triggers handleSubmit function */}
-                        <h2>Update Student</h2>
-                        <div className='mb-3'>
-                            <label>Name</label>
+        <div className="container d-flex vh-100 justify-content-center align-items-center">
+            <div className="card w-50 shadow-lg">
+                <div className="card-header bg-warning text-dark">
+                    <h4 className="mb-0 text-center">Update Student Information</h4>
+                </div>
+                <div className="card-body">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="name" className="form-label">Name</label>
                             <input
-                                type='text'
-                                className='form-control'
-                                value={name} // Bind input value to name state
-                                onChange={(e) => setName(e.target.value)} // Update name state when input changes
+                                type="text"
+                                id="name"
+                                className="form-control"
+                                placeholder="Enter student's name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
                             />
                         </div>
-                        <div className='mb-3'>
-                            <label>Email</label>
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">Email</label>
                             <input
-                                type='email'
-                                className='form-control'
-                                value={email} // Bind input value to email state
-                                onChange={(e) => setEmail(e.target.value)} // Update email state when input changes
+                                type="email"
+                                id="email"
+                                className="form-control"
+                                placeholder="Enter student's email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
                         </div>
-                        <div className='mb-3'>
-                            <label>Marks</label>
+                        <div className="mb-3">
+                            <label htmlFor="marks" className="form-label">Marks</label>
                             <input
-                                type='number'
-                                className='form-control'
-                                value={marks} // Bind input value to marks state
-                                onChange={(e) => setMarks(e.target.value)} // Update marks state when input changes
+                                type="number"
+                                id="marks"
+                                className="form-control"
+                                placeholder="Enter student's marks"
+                                value={marks}
+                                onChange={(e) => setMarks(e.target.value)}
+                                required
                             />
                         </div>
-                        <div className='mb-3'>
-                            <label>Grade</label>
+                        <div className="mb-3">
+                            <label htmlFor="grade" className="form-label">Grade</label>
                             <input
-                                type='text'
-                                className='form-control'
-                                value={grade} // Bind input value to grade state
-                                onChange={(e) => setGrade(e.target.value)} // Update grade state when input changes
+                                type="text"
+                                id="grade"
+                                className="form-control"
+                                placeholder="Enter student's grade"
+                                value={grade}
+                                onChange={(e) => setGrade(e.target.value)}
+                                required
                             />
                         </div>
-                        <div className='mb-3'>
-                            <label>City</label>
+                        <div className="mb-3">
+                            <label htmlFor="city" className="form-label">City</label>
                             <input
-                                type='text'
-                                className='form-control'
-                                value={city} // Bind input value to city state
-                                onChange={(e) => setCity(e.target.value)} // Update city state when input changes
+                                type="text"
+                                id="city"
+                                className="form-control"
+                                placeholder="Enter student's city"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                required
                             />
                         </div>
-                        <button type="submit" className="btn btn-success">Update</button> {/* Button to submit the form */}
+                        <div className="d-grid">
+                            <button type="submit" className="btn btn-success btn-block">Update</button>
+                        </div>
                     </form>
                 </div>
             </div>
-            
-
         </div>
-    )
+    );
 }
 
-export default Updatestudent
+export default UpdateStudent;
